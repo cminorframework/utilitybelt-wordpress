@@ -20,10 +20,6 @@ class PostHelper implements IPostHelper
      */
     use TPostResolver;
 
-    /**
-     * use the trait TPostMetaResolver to include methods to retrieve a post's meta from database
-     */
-    use TPostMetaResolver;
 
     /**
      * Holds the concrete implementation of the IDecoratedPost interface
@@ -59,7 +55,7 @@ class PostHelper implements IPostHelper
      * @param bool $fetch_meta_data if set to true, will also retrieve the post's metadata
      * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
      */
-    public function getDecoratedPost($post, $fetch_meta_data = false)
+    public function getDecoratedPost($post, $fetch_meta_data = false, $fetch_image_attachments = false)
     {
         /*
          * If no post is provided return null
@@ -83,7 +79,11 @@ class PostHelper implements IPostHelper
             $meta_data = $this->_getPostMetaData($post->ID);
         }
 
-        return $this->createDecoratedPost($post, $meta_data, []);
+        if($fetch_image_attachments){
+            $attachments = $this->_getPostImageAttachments($post->ID);
+        }
+
+        return $this->createDecoratedPost($post, $meta_data, [], $attachments);
 
     }
 
@@ -94,7 +94,7 @@ class PostHelper implements IPostHelper
      * @param array $extra_data_array
      * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
      */
-    public function createDecoratedPost(\Wp_Post $post = null, array $meta_data_array = [], array $extra_data_array = [])
+    public function createDecoratedPost(\Wp_Post $post = null, array $meta_data_array = [], array $extra_data_array = [], array $image_attachments = [])
     {
 
         //create a new instance of decorated post by cloning the definition
@@ -112,6 +112,10 @@ class PostHelper implements IPostHelper
 
         if($extra_data_array){
             $decorated_post->_setExtraDataArray($extra_data_array);
+        }
+
+        if($image_attachments){
+            $decorated_post->_setImageAttachmentsArray($image_attachments);
         }
 
         return $decorated_post;

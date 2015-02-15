@@ -1,9 +1,9 @@
 <?php
 namespace CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment;
 
-use CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\Models\IDecoratedModel;
 
-interface IAttachmentImage extends IDecoratedPost
+interface IAttachmentImage extends IDecoratedModel
 {
 
     public function getDescription();

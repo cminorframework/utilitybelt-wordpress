@@ -1,8 +1,8 @@
 <?php
 namespace CminorFramework\UtilityBelt\Wordpress\Components\Attachment;
 
-use CminorFramework\UtilityBelt\Wordpress\Components\Post\DecoratedPost;
 use CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IAttachmentImage;
+use CminorFramework\UtilityBelt\Wordpress\Components\Models\DecoratedModel;
 /**
  *
  * Represents the attachment image as object
@@ -15,7 +15,7 @@ use CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IAttachmentImage;
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-class AttachmentImage extends DecoratedPost implements IAttachmentImage
+class AttachmentImage extends DecoratedModel implements IAttachmentImage
 {
 
     public function getDescription()
