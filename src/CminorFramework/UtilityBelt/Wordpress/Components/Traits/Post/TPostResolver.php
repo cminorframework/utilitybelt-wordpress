@@ -2,7 +2,6 @@
 namespace CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post;
 
 use CminorFramework\UtilityBelt\Wordpress\Components\Exception\WordpressFunctionNotFoundException;
-use CminorFramework\UtilityBelt\Wordpress\Components\Traits\General\TClassNameResolver;
 /**
  * Provides the methods to resolve a post and its related data from wordpress database
  *
@@ -12,8 +11,6 @@ use CminorFramework\UtilityBelt\Wordpress\Components\Traits\General\TClassNameRe
  */
 trait TPostResolver
 {
-
-    use TClassNameResolver;
 
     /**
      * Returns a \WP_Post associated with this id or NULL if not found
@@ -30,7 +27,7 @@ trait TPostResolver
     protected function _getPostById($id, $output = null, $filter = null)
     {
         if(!function_exists('get_post')){
-            throw  new WordpressFunctionNotFoundException($this->_getClassName().'->'.__FUNCTION__.'() at line '.__LINE__.': wordpress method get_post not found');
+            throw  new WordpressFunctionNotFoundException(__CLASS__.'->'.__FUNCTION__.'() at line '.__LINE__.': wordpress method get_post not found');
         }
 
         if($post = get_post( (int) $id, $output, $filter )){
@@ -49,7 +46,7 @@ trait TPostResolver
     {
 
         if(!function_exists('get_post_meta')){
-            throw  new WordpressFunctionNotFoundException($this->_getClassName().'->'.__FUNCTION__.'() at line '.__LINE__.': wordpress method get_post_meta not found');
+            throw  new WordpressFunctionNotFoundException(__CLASS__.'->'.__FUNCTION__.'() at line '.__LINE__.': wordpress method get_post_meta not found');
         }
 
         return  get_post_meta( (int) $post_id, null, false );
@@ -65,7 +62,7 @@ trait TPostResolver
     protected function _getPostImageAttachments($post_id)
     {
         if(!function_exists('get_attached_media')){
-            throw  new WordpressFunctionNotFoundException($this->_getClassName().'->'.__FUNCTION__.'() at line '.__LINE__.': wordpress method get_attached_media not found');
+            throw  new WordpressFunctionNotFoundException(__CLASS__.'->'.__FUNCTION__.'() at line '.__LINE__.': wordpress method get_attached_media not found');
         }
 
         $post_attachments = [];
