@@ -1,5 +1,5 @@
 <?php
-namespace CminorFramework\UtilityBelt\Wordpress\Helpers\User;
+namespace CminorFramework\UtilityBelt\Wordpress\Components\User;
 
 use CminorFramework\UtilityBelt\Wordpress\Components\Traits\User\TUserResolver;
 use CminorFramework\UtilityBelt\Wordpress\Components\Traits\User\TUserMetaResolver;
