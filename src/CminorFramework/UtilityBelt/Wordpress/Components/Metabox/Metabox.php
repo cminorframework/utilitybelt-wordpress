@@ -1,7 +1,7 @@
 <?php
-namespace CminorFramework\UtilityBelt\Wordpress\Extendables\Elements\Metabox;
+namespace CminorFramework\UtilityBelt\Wordpress\Components\Metabox;
 
-use CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions\ActionRegisterable;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\Actions\IActionRegisterable;
 /**
  * Implements cool metaboxes
  *
@@ -17,7 +17,7 @@ use CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions\ActionRegisterable;
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-abstract class Metabox implements ActionRegisterable
+abstract class Metabox implements IActionRegisterable
 {
 
     /**
