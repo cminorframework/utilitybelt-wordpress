@@ -2,9 +2,11 @@
 namespace CminorFramework\UtilityBelt\Wordpress\Helpers\Attachment;
 
 use\InvalidArgumentException;
-use CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IAttachmentImage;
+
 use CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post\TPostResolver;
-use CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post\TPostMetaResolver;
+use CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post\TAttachmentResolver;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IDecoratedImage;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IAttachmentHelper;
 
 /**
  * Helper class to retrieve attachments from posts
@@ -12,129 +14,96 @@ use CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post\TPostMetaResolv
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-class AttachmentHelper
+class AttachmentHelper implements IAttachmentHelper
 {
 
     use TPostResolver;
-    use TPostMetaResolver;
+    use TAttachmentResolver;
 
     const  TYPE_ATTACHMENT = 'image';
     const TYPE_AUDIO = 'audio';
 
 
-    protected $attachment_image_definition;
+    protected $decorated_image_definition;
 
-    public function __construct(IAttachmentImage $attachment_image_definition)
+    public function __construct(IDecoratedImage $decorated_image_definition)
     {
-        $this->attachment_image_definition = $attachment_image_definition;
+        $this->decorated_image_definition = $decorated_image_definition;
     }
 
+    /**
+     * Returns a decorated image instance associated with the provided $post
+     * @see \CminorFramework\UtilityBelt\Wordpress\Contracts\Image\IImageHelper::getDecoratedImage()
+     *
+     * Throws WordpressFunctionNotFoundException exception if $post is not instance of \WP_Post AND wordpress get_post method is not found to retrieve it
+     * Throws InvalidArgumentException exception if $post is not instance of \Wp_Post AND $post is not int
+     *
+     * @uses Wordpress method : get_post
+     * @uses Wordpress method : get_post_meta
+     * @throws \CminorFramework\UtilityBelt\Wordpress\Components\Exception\WordpressFunctionNotFoundException
+     * @throws \InvalidArgumentException
+     *
+     * @param mixed:int|\WP_Post $post The post id OR the \Wp_Post object to be decorated
+     * @param bool $fetch_meta_data if set to true, will also retrieve the post's metadata
+     * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\Image\IDecoratedImage
+     */
+    public function getDecoratedImage($post, $fetch_meta_data = false)
+    {
+        /*
+         * If no image post is provided return null
+         */
+        if(!$post){
+            return null;
+        }
+
+        /*
+         * If $post is not instance of Wp_Post but is integer containing the post id, retrieve the Wp_post object from db using this id
+         */
+        if($post instanceof \WP_Post === false){
+            if(!is_numeric($post)){
+                throw new \InvalidArgumentException($this->_getClassName().'->'.__FUNCTION__.'() at line '.__LINE__.': the $post is not integer or \Wp_Post');
+            }
+            $post = $this->_getPostById($post);
+        }
+
+        $meta_data = [];
+        if($fetch_meta_data){
+            $meta_data = $this->_getAttachmentMetaData($post->ID);
+        }
+
+        return $this->createDecoratedImage($post, $meta_data, []);
+
+    }
 
 	/**
-	 *
-	 * Returns the image id associated with the post meta key
-	 *
-	 * @param int $post_id
-	 * @param string $meta_key_image_type see constants of this class
-	 *
-	 * @uses get_post_meta
-	 * @throws InvalidArgumentException
-	 *
-	 * @return Ambigous <NULL, number, mixed>
+	 * Creates a new decorated post instance and populates it with the provided data
+	 * @param \Wp_Post $post
+	 * @param array $meta_data_array
+	 * @param array $extra_data_array
+	 * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
 	 */
-	public function getImageIdFromPostMeta($post_id, $meta_key_image_type)
+	public function createDecoratedImage(\Wp_Post $post = null, array $meta_data_array = [], array $extra_data_array = [])
 	{
 
-	    if(!$post_id){
-	        throw new InvalidArgumentException(__CLASS__.'->'.__FUNCTION__.'(): '.'Invalid post id!');
+	    //create a new instance of decorated post by cloning the definition
+	    //in this way you can bind a custom decorated post class to be returned
+	    $decorated_post = clone $this->decorated_image_definition;
+
+	    //Set the decorated post's properties and data
+	    if($post){
+	        $decorated_post->_setRawObject($post);
 	    }
 
-	    if(!$meta_key_image_type){
-	        throw new InvalidArgumentException(__CLASS__.'->'.__FUNCTION__.'(): '.'Invalid meta key for image type!');
+	    if($meta_data_array){
+	        $decorated_post->_setMetaDataArray($meta_data_array);
 	    }
 
-	    $image_id = null;
-
-	    //get the image id for this image type
-	    if($image_id = get_post_meta((int) $post_id, $meta_key_image_type)){
-
-	        //its an array, get the first element
-	        $image_id = (int) $image_id[0];
-
+	    if($extra_data_array){
+	        $decorated_post->_setExtraDataArray($extra_data_array);
 	    }
 
-	    return $image_id;
+	    return $decorated_post;
 
-
-	}
-
-
-    /**
-     * Returns the image ids of the attachments of this post
-     * @param int $post_id
-     * @throws InvalidArgumentException
-     * @return Ambigous <multitype:, array>
-     */
-	public function getAttachmentImageIds($post_id)
-	{
-
-	    if(!$post_id){
-	        throw new InvalidArgumentException(__CLASS__.'->'.__FUNCTION__.'(): '.'Invalid post id!');
-	    }
-
-	    $image_ids = array();
-
-	    if($image_ids = get_attached_media(AttachmentHelper::IMAGE_TYPE_ATTACHMENT, (int) $post_id)){
-            $image_ids = array_keys($image_ids);
-	    }
-
-	    return $image_ids;
-
-	}
-
-
-	public function getAttachmentImageById($image, $fetch_meta_data = false)
-	{
-
-	    if(!$image){
-	        return null;
-	    }
-
-	    if($image instanceof \WP_Post === false){
-	        if(!$image = $this->_getPostById($image)){
-	            throw new \RuntimeException(__CLASS__.'->'.__FUNCTION__.'(): '.'Image attachment does not exist');
-	        }
-	    }
-
-	    if($fetch_meta_data){
-	        $image_meta_data = wp_get_attachment_metadata( $image->ID );
-	    }
-
-        return $this->createAttachmentImage($image, $image_meta_data, []);
-
-	}
-
-
-	public function createAttachmentImage($image, $meta_data_array, $extra_data_array)
-	{
-
-        $attachment_image = clone $this->attachment_image_definition;
-
-        if($image){
-
-            $attachment_image->_setPost($image);
-
-        }
-
-        if($meta_data_array){
-            $attachment_image->_setMetaData($meta_data_array);
-        }
-
-        if($extra_data_array){
-            $attachment_image->_setExtraData($extra_data_array);
-        }
-
-        return $attachment_image;
 	}
 
 }

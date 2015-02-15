@@ -70,13 +70,10 @@ trait TPostResolver
 
         $post_attachments = [];
         if($attachments =  get_attached_media( 'image', (int) $post_id)){
-            foreach($attachments as $attachment){
-                $post_attachments[$attachment->ID] = $attachment;
-            }
+            $post_attachments = $attachments;
         }
 
         return $post_attachments;
-
     }
 
 }

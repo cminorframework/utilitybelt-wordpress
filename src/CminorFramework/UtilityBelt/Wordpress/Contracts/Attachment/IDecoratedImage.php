@@ -3,7 +3,7 @@ namespace CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment;
 
 use CminorFramework\UtilityBelt\Wordpress\Contracts\Models\IDecoratedModel;
 
-interface IAttachmentImage extends IDecoratedModel
+interface IDecoratedImage extends IDecoratedModel
 {
 
     public function getDescription();

@@ -65,7 +65,8 @@ class PostHelper implements IPostHelper
         }
 
         /*
-         * If $post is not instance of Wp_Post but is integer containing the post id, retrieve the Wp_post object from db using this id
+         * If $post is not instance of Wp_Post but is integer containing the post id,
+         * retrieve the Wp_post object from db using this id
          */
         if($post instanceof \WP_Post === false){
             if(!is_numeric($post)){
