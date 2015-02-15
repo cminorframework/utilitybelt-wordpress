@@ -3,6 +3,7 @@
 .project
 .buildpath
 .DS_STORE
+composer.lock
 
 /vendor/
 
