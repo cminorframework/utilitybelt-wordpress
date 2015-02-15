@@ -1,0 +1,39 @@
+{
+    "name": "cminorframework/utilitybelt-wordpress",
+    "description": "The utility belt extension for wordpress",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dimitrios Psarrou",
+            "email": "dpsarrou@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+    	"illuminate/container":"*"
+    },
+    "autoload": {
+        "psr-4": {
+        	"CminorFramework\\UtilityBelt\\Wordpress\\": "src/CminorFramework/UtilityBelt/Wordpress/"
+       	}
+    },
+    "repositories": [
+	    {
+	        "type": "package",
+	        "package": {
+	            "name": "cminorframework/utilitybelt-general",
+	            "version": "dev-master",
+	            "source": {
+	                "url": "git://github.com/dpsarrou/utilitybelt-general.git",
+	                "type": "git",
+	                "reference": "master"
+	            },
+	            "autoload": {
+	                "psr-4": {
+			        	"CminorFramework\\UtilityBelt\\General\\": "src/CminorFramework/UtilityBelt/General/"
+			       	}
+	            }
+	        }
+	    }
+	]
+}
