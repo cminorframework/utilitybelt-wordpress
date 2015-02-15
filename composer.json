@@ -10,7 +10,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-    	"illuminate/container":"*"
+    	"illuminate/container":"*",
+    	"cminorframework/utilitybelt-general":"*"
     },
     "autoload": {
         "psr-4": {
@@ -18,22 +19,10 @@
        	}
     },
     "repositories": [
-	    {
-	        "type": "package",
-	        "package": {
-	            "name": "cminorframework/utilitybelt-general",
-	            "version": "dev-master",
-	            "source": {
-	                "url": "git://github.com/dpsarrou/utilitybelt-general.git",
-	                "type": "git",
-	                "reference": "master"
-	            },
-	            "autoload": {
-	                "psr-4": {
-			        	"CminorFramework\\UtilityBelt\\General\\": "src/CminorFramework/UtilityBelt/General/"
-			       	}
-	            }
-	        }
-	    }
-	]
+        {
+            "type": "git",
+            "url":  "https://github.com/cminorframework/utilitybelt-general.git"
+        }
+    ]
+	
 }

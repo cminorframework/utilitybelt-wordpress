@@ -4,8 +4,37 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4c67d73124dd9fd7b20bc6bbe3587172",
+    "hash": "4b7cbffde1c7cadbf895191a310879e5",
     "packages": [
+        {
+            "name": "cminorframework/utilitybelt-general",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cminorframework/utilitybelt-general.git",
+                "reference": "8a4c69b6cbd934a8d06055ecc575eb492af5d2ce"
+            },
+            "require": {
+                "illuminate/container": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CminorFramework\\UtilityBelt\\General\\": "src/CminorFramework/UtilityBelt/General/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dimitrios Psarrou",
+                    "email": "dpsarrou@gmail.com"
+                }
+            ],
+            "description": "The general utility belt",
+            "time": "2015-02-15 13:25:16"
+        },
         {
             "name": "illuminate/container",
             "version": "dev-master",
