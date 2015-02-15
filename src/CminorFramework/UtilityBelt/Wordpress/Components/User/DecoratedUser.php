@@ -10,7 +10,7 @@ class DecoratedUser extends DecoratedModel implements IDecoratedUser
     public function getDisplayName()
     {
 
-        return $this->raw_object->get('display_name');
+        return $this->getRawObject()->get('display_name');
 
     }
 

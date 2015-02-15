@@ -66,12 +66,17 @@ class UserHelper implements IUserHelper
         */
        if($user instanceof \WP_User === false){
            if(!is_numeric($user)){
-               throw new \InvalidArgumentException($this->_getClassName().'->'.__FUNCTION__.'() at line '.__LINE__.': the $user is not instance of integer or \WP_User');
+               throw new \InvalidArgumentException(__CLASS__.'->'.__FUNCTION__.'() at line '.__LINE__.': the $user is not instance of integer or \WP_User');
            }
            $user = $this->_getUserById($user);
        }
 
+       if(!$user){
+           return null;
+       }
+
        $meta_data = [];
+
        if($fetch_meta_data){
            $meta_data = $this->_getUserMetaData($user->ID);
        }
