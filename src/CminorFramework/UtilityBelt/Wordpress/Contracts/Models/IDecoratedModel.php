@@ -6,7 +6,7 @@ interface IDecoratedModel
 
     public function _setRawObject($raw_object);
 
-    public function getRawObject($raw_object);
+    public function getRawObject();
 
     public function _setMetaDataArray(array $data_array);
 
