@@ -1,9 +1,7 @@
 <?php
 namespace CminorFramework\UtilityBelt\Wordpress\Contracts\User;
 
-use CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IPostHelper;
-
-interface IUserHelper extends IPostHelper
+interface IUserHelper
 {
     /**
      * Returns a decorated user instance associated with the provided $user
