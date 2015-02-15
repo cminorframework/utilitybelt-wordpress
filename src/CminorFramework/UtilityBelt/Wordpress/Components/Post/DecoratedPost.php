@@ -6,13 +6,18 @@ use CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost;
 class DecoratedPost implements IDecoratedPost
 {
 
-    protected $post;
+    protected $raw_object;
     protected $_meta_data;
     protected $_extra_data;
 
-    public function _setPost(\WP_Post $post, $fetch_meta_data = false)
+    public function _setRawObject($raw_object)
     {
-        $this->post = $post;
+        $this->raw_object = $raw_object;
+    }
+
+    public function getRawObject()
+    {
+        return $this->raw_object;
     }
 
     public function _setMetaDataArray(array $data_array)
@@ -33,11 +38,6 @@ class DecoratedPost implements IDecoratedPost
     public function setExtraData($key, $value)
     {
         $this->_extra_data[$key] = $value;
-    }
-
-    public function getPost()
-    {
-        return $this->post;
     }
 
     public function getMetaData( $meta_key, $single = true, $filter_function = null)

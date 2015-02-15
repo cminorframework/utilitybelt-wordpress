@@ -1,161 +1,114 @@
 <?php
 namespace CminorFramework\UtilityBelt\Wordpress\Helpers\User;
 
+use CminorFramework\UtilityBelt\Wordpress\Components\Traits\User\TUserResolver;
+use CminorFramework\UtilityBelt\Wordpress\Components\Traits\User\TUserMetaResolver;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\User\IDecoratedUser;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\User\IUserHelper;
 /**
  * Helper class to retrieve user data
  * @author Dimitrios Psarrou <dpsarrou@gmail.com> d(^_^)b
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-class UserHelper
+class UserHelper implements IUserHelper
 {
 
-    /**
-     * Returns a Wp_User object if it exists in the system, null otherwise
-     * @param int $user_id
-     * @throws \InvalidArgumentException
-     * @return Ambigous <NULL, WP_User>
-     */
-    public function getUserById($user_id)
-    {
+   use TUserResolver;
 
-        if(!$user_id){
-            throw new \InvalidArgumentException(__CLASS__.'->'.__FUNCTION__.'(): '.'Invalid user id!');
-        }
+   use TUserMetaResolver;
 
-        $wp_user = null;
+   /**
+    * Holds the concrete implementation of the IDecoratedUser interface
+    * This is the class that will be used to clone from when creating new objects of this type
+    *
+    * @var \CminorFramework\UtilityBelt\Wordpress\Contracts\User\IDecoratedUser
+    */
+   protected $decorated_user_definition;
 
-        if ( $user =  get_user_by('id', (int) $user_id ) ){
+   /**
+    * The class dependencies
+    *
+    * @param \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost $decorated_post_definition
+    */
+   public function __construct(IDecoratedUser $decorated_user_definition)
+   {
+       $this->decorated_user_definition = $decorated_user_definition;
+   }
 
-            $wp_user = $user;
+   /**
+    * Returns a decorated user instance associated with the provided $user
+    * @see \CminorFramework\UtilityBelt\Wordpress\Contracts\User\IUserHelper::getDecoratedPost()
+    *
+    * Throws WordpressFunctionNotFoundException exception if $post is not instance of \WP_User AND wordpress get_user method is not found to retrieve it
+    * Throws InvalidArgumentException exception if $user is not instance of \WP_User AND $user is not int
+    *
+    * @uses Wordpress method : get_user_by
+    * @uses Wordpress method : get_user_meta
+    * @throws \CminorFramework\UtilityBelt\Wordpress\Components\Exception\WordpressFunctionNotFoundException
+    * @throws \InvalidArgumentException
+    *
+    * @param mixed:int|\WP_User $user The user id OR the \Wp_User object to be decorated
+    * @param bool $fetch_meta_data if set to true, will also retrieve the user's metadata
+    * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\User\IDecoratedUser
+    */
+   public function getDecoratedUser($user, $fetch_meta_data = false)
+   {
+       /*
+        * If no post is provided return null
+        */
+       if(!$user){
+           return null;
+       }
 
-        }
+       /*
+        * If $post is not instance of WP_User but is integer containing the user id, retrieve from db using this id
+        */
+       if($user instanceof \WP_User === false){
+           if(!is_numeric($user)){
+               throw new \InvalidArgumentException($this->_getClassName().'->'.__FUNCTION__.'() at line '.__LINE__.': the $user is not instance of integer or \WP_User');
+           }
+           $user = $this->_getUserById($user);
+       }
 
-        return $wp_user;
+       $meta_data = [];
+       if($fetch_meta_data){
+           $meta_data = $this->_getUserMetaData($user->ID);
+       }
 
-    }
+       return $this->createDecoratedUser($user, $meta_data, []);
 
-    /**
-     * Returns the display name associated with this user id
-     * @param unknown $user_id
-     * @throws InvalidArgumentException
-     * @return Ambigous <number, mixed>
-     */
-    public function getDisplayNameByUserId($user_id)
-    {
+   }
 
-        if(!$user_id){
-			throw new \InvalidArgumentException(__CLASS__.'->'.__FUNCTION__.'(): '.'Invalid user id!');
-		}
+   /**
+    * Creates a new decorated user instance and populates it with the provided data
+    * @param \WP_User $user
+    * @param array $meta_data_array
+    * @param array $extra_data_array
+    * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\User\IDecoratedUser
+    */
+   public function createDecoratedUser(\WP_User $user = null, array $meta_data_array = [], array $extra_data_array = [])
+   {
 
-		$display_name = null;
+       //create a new instance of decorated post by cloning the definition
+       //in this way you can bind a custom decorated post class to be returned
+       $decorated_user = clone $this->decorated_user_definition;
 
-		//get the user object
-		if( $user = $this->getUserById($user_id) ){
-		    $display_name = $this->getDisplayNameByUser($user);
-		}
+       //Set the decorated post's properties and data
+       if($user){
+           $decorated_user->_setRawObject($user);
+       }
 
-		return $display_name;
+       if($meta_data_array){
+           $decorated_user->_setMetaDataArray($meta_data_array);
+       }
 
-    }
+       if($extra_data_array){
+           $decorated_user->_setExtraDataArray($extra_data_array);
+       }
 
-    /**
-     * Returns the display name associated with this user object
-     * @param \WP_User $user
-     * @return Ambigous <number, mixed>
-     */
-    public function getDisplayNameByUser(\WP_User $user)
-    {
+       return $decorated_user;
 
-        if(!$user){
-            throw new \InvalidArgumentException(__CLASS__.'->'.__FUNCTION__.'(): '.'Invalid user object!');
-        }
-
-
-        return $user->get('display_name');
-
-    }
-
-    /**
-     * Returns the user avatar image by providing the user id
-     * @param int $user_id
-     * @param number $width
-     * @throws \RuntimeException
-     * @return string
-     */
-    public function getUserAvatarByUserId($user_id, $width = 200)
-    {
-
-        $user_avatar = null;
-
-        if(!function_exists('user_avatar_get_avatar')){
-            throw new \RuntimeException(__CLASS__.'->'.__FUNCTION__.'(): '.'Missing function user_avatar_get_avatar!');
-        }
-
-        $user_avatar = user_avatar_get_avatar( $user_id , $width);
-
-        return $user_avatar;
-
-    }
-
-    /**
-     * Returns the user avatar image by providing the user object
-     * @uses user_avatar_get_avatar
-     * @param \WP_User $user
-     * @param number $width
-     * @return \CminorFramework\UtilityBelt\Wordpress\Helpers\User\Ambigous
-     */
-    public function getUserAvatarByUser(\WP_User $user, $width = 200)
-    {
-
-        $user_id = $user->ID;
-
-        return $this->getUserAvatarByUserId($user_id, $width);
-
-    }
-
-    /**
-     * Returns a UserMetaDetailsHelper object if the user has meta details, null otherwise
-     * @param int $user_id
-     * @throws \InvalidArgumentException
-     * @return \CminorFramework\UtilityBelt\Wordpress\Helpers\User\UserMetaDetailsHelper
-     */
-    public function getUserMetaDetails($user_id)
-    {
-
-        if(!$user_id){
-            throw new \InvalidArgumentException(__CLASS__.'->'.__FUNCTION__.'(): '.'Invalid user id!');
-        }
-
-        $user_meta_helper = null;
-
-        //get the meta details from wordpress
-        if ($user_meta_details = get_user_meta( (int) $user_id) ){
-
-            //create an instance of the user meta details helper
-            $user_meta_helper = $this->createUserMetaDetailsHelper($user_meta_details);
-
-        }
-
-        return $user_meta_helper;
-
-    }
-
-    /**
-     * Create an instance of the UserMetaDetailsHelper
-     * @param array $user_meta_details
-     * @return \CminorFramework\UtilityBelt\Wordpress\Helpers\User\UserMetaDetailsHelper
-     */
-    public function createUserMetaDetailsHelper($user_meta_details)
-    {
-
-        $user_meta_helper = new UserMetaDetailsHelper();
-
-        $user_meta_helper->_setUserMetaDetails($user_meta_details);
-
-        return $user_meta_helper;
-
-    }
-
+   }
 
 }

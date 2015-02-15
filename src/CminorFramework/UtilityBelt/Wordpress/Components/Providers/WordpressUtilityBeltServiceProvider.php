@@ -29,6 +29,10 @@ class WordpressUtilityBeltServiceProvider extends Container implements IWordpres
         $this->bind('CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IPostHelper', 'CminorFramework\UtilityBelt\Wordpress\Components\Post\PostHelper', true);
         $this->bind('CminorFramework\UtilityBelt\Wordpress\Contracts\Taxonomy\ITaxonomyHelper', 'CminorFramework\UtilityBelt\Wordpress\Components\Taxonomy\TaxonomyHelper', true);
         $this->bind('CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IAttachmentHelper', 'CminorFramework\UtilityBelt\Wordpress\Components\Attachment\AttachmentHelper', true);
+        $this->bind('CminorFramework\UtilityBelt\Wordpress\Contracts\User\IDecoratedUser', 'CminorFramework\UtilityBelt\Wordpress\Components\User\DecoratedUser', false);
+        $this->bind('CminorFramework\UtilityBelt\Wordpress\Contracts\User\IUserHelper', 'CminorFramework\UtilityBelt\Wordpress\Components\User\UserHelper', true);
+
+
     }
 
 

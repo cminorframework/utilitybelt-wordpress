@@ -4,7 +4,9 @@ namespace CminorFramework\UtilityBelt\Wordpress\Contracts\Post;
 interface IDecoratedPost
 {
 
-    public function _setPost(\WP_Post $post, $fetch_meta_data = false);
+    public function _setRawObject($raw_object);
+
+    public function getRawObject($raw_object);
 
     public function _setMetaDataArray(array $data_array);
 
@@ -13,8 +15,6 @@ interface IDecoratedPost
     public function setMetaData($key, $value);
 
     public function setExtraData($key, $value);
-
-    public function getPost();
 
     public function getMetaData( $meta_key, $single = true, $filter_function = null);
 

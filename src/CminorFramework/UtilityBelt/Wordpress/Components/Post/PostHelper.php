@@ -103,7 +103,7 @@ class PostHelper implements IPostHelper
 
         //Set the decorated post's properties and data
         if($post){
-            $decorated_post->_setPost($post);
+            $decorated_post->_setRawObject($post);
         }
 
         if($meta_data_array){
