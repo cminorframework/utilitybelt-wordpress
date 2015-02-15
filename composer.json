@@ -18,11 +18,11 @@
         	"CminorFramework\\UtilityBelt\\Wordpress\\": "src/CminorFramework/UtilityBelt/Wordpress/"
        	}
     },
-    "repositories": {
-        "cminorframework/utilitybelt-general":{
+    "repositories": [
+       	{
             "type": "git",
             "url":  "https://github.com/cminorframework/utilitybelt-general.git"
         }
-    }
+    ]
 	
 }
