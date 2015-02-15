@@ -1,8 +1,8 @@
 <?php
-namespace CminorFramework\UtilityBelt\Wordpress\Extendables\Components\Actions;
+namespace CminorFramework\UtilityBelt\Wordpress\Components\Actions;
 
-use CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions\ActionRegister as ActionRegisterInterface;
-use CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions\ActionRegisterable;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\Actions\IActionRegisterable;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\Actions\IActionRegister;
 
 /**
  *
@@ -12,7 +12,7 @@ use CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions\ActionRegisterable;
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-class ActionsRegister implements ActionRegisterInterface
+class ActionsRegister implements IActionRegister
 {
 
     /**
@@ -30,9 +30,10 @@ class ActionsRegister implements ActionRegisterInterface
     /**
      * Adds an action class to the register
      *
-     * @see \CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions\ActionRegister::addAction()
+     * @param IActionRegisterable $action
+     * @see \CminorFramework\UtilityBelt\Wordpress\Contracts\Actions\IActionRegister::addAction()
      */
-    public function addAction(ActionRegisterable $action){
+    public function addAction(IActionRegisterable $action){
 
         if($action){
             $this->_action_classes[] = $action;
@@ -42,9 +43,9 @@ class ActionsRegister implements ActionRegisterInterface
 
     /**
      * Adds an admin action class to the register
-     * @see \CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions\ActionRegister::addAdminAction()
+     * @see \CminorFramework\UtilityBelt\Wordpress\Contracts\Actions\IActionRegister::addAdminAction()
      */
-    public function addAdminAction(ActionRegisterable $action)
+    public function addAdminAction(IActionRegisterable $action)
     {
         if($action){
             $this->_admin_action_classes[] = $action;
@@ -54,7 +55,7 @@ class ActionsRegister implements ActionRegisterInterface
 
     /**
      * Register all the actions classes found at the register
-     * @see \CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions\ActionRegister::registerActions()
+     * @see \CminorFramework\UtilityBelt\Wordpress\Contracts\Actions\IActionRegister::registerActions()
      */
     public function registerActions()
     {

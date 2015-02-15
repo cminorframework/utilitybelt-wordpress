@@ -19,7 +19,7 @@
        	}
     },
     "repositories": [
-        {
+        "cminorframework/utilitybelt-general":{
             "type": "git",
             "url":  "https://github.com/cminorframework/utilitybelt-general.git"
         }

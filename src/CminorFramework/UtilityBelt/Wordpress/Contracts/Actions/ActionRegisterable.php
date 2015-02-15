@@ -1,5 +1,5 @@
 <?php
-namespace CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions;
+namespace CminorFramework\UtilityBelt\Wordpress\Contracts\Actions;
 
 /**
  * Defines the required functions for the wordpress action classes
@@ -8,7 +8,7 @@ namespace CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions;
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-interface ActionRegisterable
+interface IActionRegisterable
 {
 
 	/**

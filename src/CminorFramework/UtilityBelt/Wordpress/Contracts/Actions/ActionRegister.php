@@ -1,5 +1,5 @@
 <?php
-namespace CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions;
+namespace CminorFramework\UtilityBelt\Wordpress\Contracts\Actions;
 
 /**
  * Defines the functions for a class that registers wordpress actions
@@ -9,21 +9,21 @@ namespace CminorFramework\UtilityBelt\Wordpress\Interfaces\Actions;
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-interface ActionRegister
+interface IActionRegister
 {
 
 	/**
 	 * Adds a wordpress action class to the register
 	 *
-	 * @param ActionRegisterable $action
+	 * @param IActionRegisterable $action
 	 */
-	public function addAction(ActionRegisterable $action);
+	public function addAction(IActionRegisterable $action);
 
 	/**
 	 * Adds a worpdress action class to the admin actions register
-	 * @param ActionRegisterable $action
+	 * @param IActionRegisterable $action
 	 */
-	public function addAdminAction(ActionRegisterable $action);
+	public function addAdminAction(IActionRegisterable $action);
 
 	/**
 	 * Registers all the action classes
