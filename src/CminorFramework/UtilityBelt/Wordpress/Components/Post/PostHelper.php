@@ -170,7 +170,7 @@ class PostHelper implements IPostHelper
         }
 
         //its an array, get the first element
-        $term = $term[0];
+        $term = $terms[0];
 
         //find the post of this custom taxonomy term
         $args = array(
