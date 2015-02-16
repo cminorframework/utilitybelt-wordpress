@@ -23,7 +23,7 @@ interface IPostHelper
     public function getDecoratedPost($post, $fetch_meta_data = false, $fetch_image_attachments = false);
 
     /**
-     * Returns the decorated posts instances associated with the provided $post
+     * Returns array with the decorated posts instances associated with the provided $posts
      * @param array $posts an array of \WP_Post
      * @param bool $fetch_meta_data if set to true, will also retrieve the post's metadata
      * @return mixed:\CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
@@ -42,13 +42,22 @@ interface IPostHelper
 
     /**
      * Returns the $post_type post that is connected to the provided post by taxonomy and meta key
+     * Returns null if no post found
      * @param int $post_id
      * @param string $post_type
      * @param string $taxonomy
      * @param string $connection_meta_key
-     * @throws InvalidArgumentException
      * @return \WP_Post|NULL
      */
     public function getConnectedPostByTaxonomyAndMetaKey($post_id, $post_type, $taxonomy, $connection_meta_key);
+
+    /**
+     * Returns the decorated image object associated with this post and meta key
+     * Returns null if no image found
+     * @param int|WP_Post $post
+     * @param string $image_type_meta_key
+     * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IDecoratedImage|NULL
+     */
+    public function getAttachmentImageByPostMeta($post, $image_type_meta_key);
 
 }

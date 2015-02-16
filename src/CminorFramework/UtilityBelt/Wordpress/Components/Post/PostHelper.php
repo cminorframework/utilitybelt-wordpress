@@ -5,6 +5,7 @@ use CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IPostHelper;
 use CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost;
 use CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post\TPostResolver;
 use CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post\TPostMetaResolver;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IAttachmentHelper;
 /**
  * Helper class to provide helpful methods for a post
  *
@@ -28,15 +29,17 @@ class PostHelper implements IPostHelper
      * @var \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
      */
     protected $decorated_post_definition;
+    protected $attachment_helper;
 
     /**
      * The class dependencies
      *
      * @param \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost $decorated_post_definition
      */
-    public function __construct(IDecoratedPost $decorated_post_definition)
+    public function __construct(IDecoratedPost $decorated_post_definition, IAttachmentHelper $attachment_helper)
     {
         $this->decorated_post_definition = $decorated_post_definition;
+        $this->attachment_helper = $attachment_helper;
     }
 
     /**
@@ -64,16 +67,8 @@ class PostHelper implements IPostHelper
             return null;
         }
 
-        /*
-         * If $post is not instance of Wp_Post but is integer containing the post id,
-         * retrieve the Wp_post object from db using this id
-         */
-        if($post instanceof \WP_Post === false){
-            if(!is_numeric($post)){
-               throw new \InvalidArgumentException($this->_getClassName().'->'.__FUNCTION__.'() at line '.__LINE__.': the $post is not integer or \Wp_Post');
-            }
-            $post = $this->_getPostById($post);
-        }
+        //check if $post is int or Wp_post and return Wp_post
+        $post = $this->_resolvePostVariable($post);
 
         $meta_data = [];
         if($fetch_meta_data){
@@ -193,6 +188,57 @@ class PostHelper implements IPostHelper
         }
 
         return $post_query->posts[0];
+
+    }
+
+    /**
+     * Returns the decorated image object associated with this post and meta key
+     * @param int|WP_Post $post
+     * @param string $image_type_meta_key
+     * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IDecoratedImage|NULL
+     */
+    public function getAttachmentImageByPostMeta($post, $image_type_meta_key)
+    {
+        //get the decorated post
+        try{
+            $decorated_post = $this->getDecoratedPost($post, true, false);
+        }
+        catch(\InvalidArgumentException $e){
+            return null;
+        }
+
+        $decorated_image = null;
+
+        //find the image id by the post meta and get the decorated image object
+        if($image_id = $decorated_post->getMetaData($image_type_meta_key)){
+            $decorated_image = $this->attachment_helper->getDecoratedImage($image_id, true);
+        }
+
+        return $decorated_image;
+
+    }
+
+
+    /**
+     * If $post is not instance of Wp_Post but is integer containing the post id,
+     * retrieve the Wp_post object from db using this id.
+     * Throws exception if $post is NOT int or \WP_Post
+     *
+     * @param mixed $post
+     * @throws \InvalidArgumentException
+     * @return \WP_Post|NULL
+     */
+    protected function _resolvePostVariable($post)
+    {
+
+        if($post instanceof \WP_Post === false){
+            if(!is_numeric($post)){
+                throw new \InvalidArgumentException(get_class($this).'->'.__FUNCTION__.'() at line '.__LINE__.': the $post is not integer or \Wp_Post');
+            }
+            $post = $this->_getPostById($post);
+        }
+
+        return $post;
 
     }
 
