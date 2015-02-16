@@ -11,4 +11,10 @@ abstract class Controller implements IController
 
     }
 
+    //@override
+    public function hasViewData()
+    {
+
+    }
+
 }

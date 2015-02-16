@@ -88,11 +88,19 @@ class PostHelper implements IPostHelper
 
     }
 
+    /**
+     * Returns the decorated posts instances associated with the provided $post
+     * @param array $posts an array of \WP_Post
+     * @param bool $fetch_meta_data if set to true, will also retrieve the post's metadata
+     * @return mixed:\CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
+     * @see \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IPostHelper::getDecoratedPost($post, $fetch_meta_data, $fetch_image_attachments)
+     */
     public function getDecoratedPosts(array $posts, $fetch_meta_data = false, $fetch_image_attachments = false)
     {
         if(!$posts){
             return [];
         }
+
         $decorated_posts = [];
         foreach($posts as $raw_post){
             $decorated_post = $this->getDecoratedPost($post, $fetch_meta_data, $fetch_image_attachments);
@@ -135,6 +143,55 @@ class PostHelper implements IPostHelper
         }
 
         return $decorated_post;
+
+    }
+
+
+    /**
+     * Returns the $post_type post that is connected to the provided post by taxonomy and meta key
+     * @param int $post_id
+     * @param string $post_type
+     * @param string $taxonomy
+     * @param string $connection_meta_key
+     * @throws InvalidArgumentException
+     * @return \WP_Post|NULL
+     */
+    public function getConnectedPostByTaxonomyAndMetaKey($post_id, $post_type, $taxonomy, $connection_meta_key)
+    {
+
+        if(!$post_id){
+            throw new InvalidArgumentException(__CLASS__.'->'.__FUNCTION__.'(): '.'Invalid post id!');
+        }
+
+
+        //get the term for this field taxonomy
+        if(!$terms = wp_get_post_terms( (int) $post_id, $taxonomy)){
+            return null;
+        }
+
+        //its an array, get the first element
+        $term = $term[0];
+
+        //find the post of this custom taxonomy term
+        $args = array(
+            'post_type' => $post_type,
+            'posts_per_page' => 1,
+            'meta_query' => array(
+                array(
+                    'key'     => $connection_meta_key,
+                    'value'   => array($term->term_id),
+                    'compare' => 'IN',
+                ),
+            )
+        );
+
+        $post_query = new \WP_Query($args);
+
+        if(!$post_query->posts){
+            return null;
+        }
+
+        return $post_query->posts[0];
 
     }
 

@@ -22,6 +22,12 @@ interface IPostHelper
      */
     public function getDecoratedPost($post, $fetch_meta_data = false, $fetch_image_attachments = false);
 
+    /**
+     * Returns the decorated posts instances associated with the provided $post
+     * @param array $posts an array of \WP_Post
+     * @param bool $fetch_meta_data if set to true, will also retrieve the post's metadata
+     * @return mixed:\CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
+     */
     public function getDecoratedPosts(array $posts, $fetch_meta_data = false, $fetch_image_attachments = false);
 
     /**
@@ -33,5 +39,16 @@ interface IPostHelper
      * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
      */
     public function createDecoratedPost(\Wp_Post $post = null, array $meta_data_array = [], array $extra_data_array = [], array $image_attachments = []);
+
+    /**
+     * Returns the $post_type post that is connected to the provided post by taxonomy and meta key
+     * @param int $post_id
+     * @param string $post_type
+     * @param string $taxonomy
+     * @param string $connection_meta_key
+     * @throws InvalidArgumentException
+     * @return \WP_Post|NULL
+     */
+    public function getConnectedPostByTaxonomyAndMetaKey($post_id, $post_type, $taxonomy, $connection_meta_key);
 
 }
