@@ -1,5 +1,5 @@
 <?php
-namespace CminorFramework\UtilityBelt\Components\Controllers;
+namespace CminorFramework\UtilityBelt\Wordpress\Components\Controllers;
 
 use CminorFramework\UtilityBelt\Wordpress\Components\Controllers\Controller;
 
