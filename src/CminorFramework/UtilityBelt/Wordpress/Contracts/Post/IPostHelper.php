@@ -60,4 +60,13 @@ interface IPostHelper
      */
     public function getAttachmentImageByPostMeta($post, $image_type_meta_key);
 
+    /**
+     * Returns the image src of the image file associated with the provided post by the post meta
+     * @param int|WP_Post $post
+     * @param string $image_type_meta_key
+     * @param string $image_size
+     * @return string|NULL
+     */
+    public function getAttachmentImageSrcByPostMeta($post, $image_type_meta_key, $image_size);
+
 }

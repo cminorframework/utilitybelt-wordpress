@@ -106,5 +106,4 @@ class AttachmentHelper implements IAttachmentHelper
 
 	}
 
-
 }

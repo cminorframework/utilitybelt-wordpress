@@ -200,12 +200,7 @@ class PostHelper implements IPostHelper
     public function getAttachmentImageByPostMeta($post, $image_type_meta_key)
     {
         //get the decorated post
-        try{
-            $decorated_post = $this->getDecoratedPost($post, true, false);
-        }
-        catch(\InvalidArgumentException $e){
-            return null;
-        }
+        $decorated_post = $this->getDecoratedPost($post, true, false);
 
         $decorated_image = null;
 
@@ -215,6 +210,34 @@ class PostHelper implements IPostHelper
         }
 
         return $decorated_image;
+
+    }
+
+    /**
+     * Returns the image src of the image file associated with the provided post by the post meta
+     * @param int|WP_Post $post
+     * @param string $image_type_meta_key
+     * @param string $image_size
+     * @return string|NULL
+     */
+    public function getAttachmentImageSrcByPostMeta($post, $image_type_meta_key, $image_size)
+    {
+
+        $img_src = null;
+
+        try
+                {
+            if($decorated_image = $this->getAttachmentImageByPostMeta($post, $image_type_meta_key)){
+                if($src = $decorated_image->getSrc($image_size)){
+                    $img_src = $src;
+                }
+            }
+        }
+        catch(\InvalidArgumentException $e){
+            return null;
+        }
+
+        return $img_src;
 
     }
 
