@@ -67,8 +67,8 @@ class PostHelper implements IPostHelper
             return null;
         }
 
-        //check if $post is int or Wp_post and return Wp_post
-        $post = $this->_resolvePostVariable($post);
+        //check if $post is int or Wp_post or IdecoratedPost and return Wp_post
+        $post = $this->_postAdapter($post);
 
         $meta_data = [];
         if($fetch_meta_data){
@@ -200,7 +200,7 @@ class PostHelper implements IPostHelper
     public function getAttachmentImageByPostMeta($post, $image_type_meta_key)
     {
         //get the decorated post
-        $decorated_post = $this->getDecoratedPost($post, true, false);
+        $decorated_post = $this->_decoratedPostAdapter($post, true);
 
         $decorated_image = null;
 
@@ -243,25 +243,55 @@ class PostHelper implements IPostHelper
 
 
     /**
-     * If $post is not instance of Wp_Post but is integer containing the post id,
-     * retrieve the Wp_post object from db using this id.
-     * Throws exception if $post is NOT int or \WP_Post
+     * Accepts INT(post_id), WP_Post, IDecoratedPost and returns WP_Post
+     *
+     * Throws exception if $post is not one of the above
      *
      * @param mixed $post
      * @throws \InvalidArgumentException
      * @return \WP_Post|NULL
      */
-    protected function _resolvePostVariable($post)
+    protected function _postAdapter($post)
     {
 
-        if($post instanceof \WP_Post === false){
-            if(!is_numeric($post)){
-                throw new \InvalidArgumentException(get_class($this).'->'.__FUNCTION__.'() at line '.__LINE__.': the $post is not integer or \Wp_Post');
-            }
-            $post = $this->_getPostById($post);
+        switch(true){
+            case $post instanceof \WP_Post:
+                return $post;
+            case $post instanceof IDecoratedPost:
+                return $post->getRawObject();
+            case is_numeric($post):
+                return $this->_getPostById($post);
+            default:
+                $message = get_class($this).'->'.__FUNCTION__.'() at line '.__LINE__.': the $post is not INT or \Wp_Post or IDecoratedPost';
+                throw new \InvalidArgumentException($message);
         }
 
-        return $post;
+    }
+
+    /**
+     * Accepts INT(post_id), WP_Post, IDecoratedPost and returns IDecoratedPost
+     *
+     * Throws exception if $post is not one of the above
+     *
+     * @param mixed $post
+     * @param bool $with_meta if true fetches the posts meta information
+     * @throws \InvalidArgumentException
+     * @return IDecoratedPost|NULL
+     */
+    protected function _decoratedPostAdapter($post, $with_meta = true)
+    {
+
+        switch(true){
+            case $post instanceof \WP_Post:
+                return $this->getDecoratedPost($post, $with_meta);
+            case $post instanceof IDecoratedPost:
+                return $post;
+            case is_numeric($post):
+                return $this->getDecoratedPost($post, $with_meta);
+            default:
+                $message = get_class($this).'->'.__FUNCTION__.'() at line '.__LINE__.': the $post is not INT or \Wp_Post or IDecoratedPost';
+                throw new \InvalidArgumentException($message);
+        }
 
     }
 

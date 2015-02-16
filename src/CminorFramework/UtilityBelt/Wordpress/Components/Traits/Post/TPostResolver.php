@@ -2,6 +2,7 @@
 namespace CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post;
 
 use CminorFramework\UtilityBelt\Wordpress\Components\Exception\WordpressFunctionNotFoundException;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost;
 /**
  * Provides the methods to resolve a post and its related data from wordpress database
  *
@@ -52,6 +53,7 @@ trait TPostResolver
         return  get_post_meta( (int) $post_id, null, false );
 
     }
+
 
     /**
      * Returns the image attachments of this post
