@@ -80,6 +80,7 @@ class PostHelper implements IPostHelper
             $meta_data = $this->_getPostMetaData($post->ID);
         }
 
+        $attachments = [];
         if($fetch_image_attachments){
             $attachments = $this->_getPostImageAttachments($post->ID);
         }
