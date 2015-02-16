@@ -144,5 +144,28 @@ class TaxonomyHelper implements ITaxonomyHelper
 	}
 
 
+	/**
+	 * Returns the post terms for this taxonomy
+	 * A $callback function can be applied to filter the results
+	 * @param int $post_id
+	 * @param string $taxonomy
+	 * @param string $callback
+	 * @return array
+	 */
+	public function getPostTermsByTaxonomy($post_id, $taxonomy, $callback = null)
+	{
+
+	    $terms = [];
+	    if($taxonomy_terms = wp_get_post_terms($post_id, $taxonomy)){
+
+	        if($callback){
+	            $terms = $callback($taxonomy_terms);
+	        }
+	        $terms = $taxonomy_terms;
+	    }
+
+	    return $terms;
+	}
+
 
 }
