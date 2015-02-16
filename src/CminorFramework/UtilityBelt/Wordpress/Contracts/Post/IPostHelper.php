@@ -22,6 +22,8 @@ interface IPostHelper
      */
     public function getDecoratedPost($post, $fetch_meta_data = false, $fetch_image_attachments = false);
 
+    public function getDecoratedPosts(array $posts, $fetch_meta_data = false, $fetch_image_attachments = false);
+
     /**
      * Creates a new decorated post instance and populates it with the provided data
      * @param \Wp_Post $post

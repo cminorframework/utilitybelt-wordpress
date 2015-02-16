@@ -88,6 +88,21 @@ class PostHelper implements IPostHelper
 
     }
 
+    public function getDecoratedPosts(array $posts, $fetch_meta_data = false, $fetch_image_attachments = false)
+    {
+        if(!$posts){
+            return [];
+        }
+        $decorated_posts = [];
+        foreach($posts as $raw_post){
+            $decorated_post = $this->getDecoratedPost($post, $fetch_meta_data, $fetch_image_attachments);
+            $decorated_posts[$raw_post->ID] = $decorated_post;
+        }
+
+        return $decorated_posts;
+
+    }
+
     /**
      * Creates a new decorated post instance and populates it with the provided data
      * @param \Wp_Post $post
