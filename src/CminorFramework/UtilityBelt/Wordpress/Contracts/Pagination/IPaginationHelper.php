@@ -1,8 +1,6 @@
 <?php
-namespace CminorFramework\UtilityBelt\Wordpress\Components\Pagination;
+namespace CminorFramework\UtilityBelt\Wordpress\Contracts\Pagination;
 
-use CminorFramework\UtilityBelt\General\Contracts\URI\IURIHelper;
-use CminorFramework\UtilityBelt\Wordpress\Contracts\Pagination\IPaginationHelper;
 /**
  *
  * Creates paginated links and echo pagination on the screen
@@ -13,7 +11,7 @@ use CminorFramework\UtilityBelt\Wordpress\Contracts\Pagination\IPaginationHelper
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-class PaginationHelper implements IPaginationHelper
+interface IPaginationHelper
 {
 
     /**
