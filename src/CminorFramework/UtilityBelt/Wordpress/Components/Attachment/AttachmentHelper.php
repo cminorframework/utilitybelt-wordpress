@@ -66,6 +66,10 @@ class AttachmentHelper implements IAttachmentHelper
             $post = $this->_getPostById($post);
         }
 
+        if(!$post){
+            return null;
+        }
+
         $meta_data = [];
         if($fetch_meta_data){
             $meta_data = $this->_getAttachmentMetaData($post->ID);
