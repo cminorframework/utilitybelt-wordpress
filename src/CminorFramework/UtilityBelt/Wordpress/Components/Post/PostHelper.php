@@ -223,13 +223,11 @@ class PostHelper implements IPostHelper
     public function getAttachmentImageSrcByPostMeta($post, $image_type_meta_key, $image_size)
     {
 
-        $img_src = null;
-
         try
                 {
             if($decorated_image = $this->getAttachmentImageByPostMeta($post, $image_type_meta_key)){
                 if($src = $decorated_image->getSrc($image_size)){
-                    $img_src = $src;
+                    return $src;
                 }
             }
         }
@@ -237,7 +235,7 @@ class PostHelper implements IPostHelper
             return null;
         }
 
-        return $img_src;
+        return null;
 
     }
 
