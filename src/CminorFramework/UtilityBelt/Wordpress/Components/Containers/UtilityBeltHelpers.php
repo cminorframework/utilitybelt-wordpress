@@ -102,17 +102,11 @@ class UtilityBeltHelpers
      * Returns the User Helper
      *
      * @since 0.1
-     * @return \CminorFramework\UtilityBelt\Wordpress\Helpers\User\UserHelper
+     * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\User\IUserHelper
      */
     public function getUserHelper()
     {
-
-        if ( ! isset( $this->user_helper ) ) {
-            $this->user_helper = new UserHelper();
-        }
-
-        return $this->user_helper;
-
+        return $this->service_provider->get('CminorFramework\UtilityBelt\Wordpress\Contracts\User\IUserHelper');
     }
 
     /**
@@ -123,13 +117,7 @@ class UtilityBeltHelpers
      */
     public function getPaginationHelper()
     {
-
-        if ( ! isset( $this->pagination_helper ) ) {
-            $this->pagination_helper = new PaginationHelper($this->uri_helper);
-        }
-
-        return $this->pagination_helper;
-
+        return $this->service_provider->get('CminorFramework\UtilityBelt\Wordpress\Contracts\Pagination\IPaginationHelper');
     }
 
 }

@@ -72,7 +72,7 @@ class WordpressUtilityBelt
      */
     public function getHelpers()
     {
-
+        //
         if( !isset($this->utility_belt_helpers) ){
 
             $utility_belt_helpers = new UtilityBeltHelpers();
