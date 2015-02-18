@@ -1,7 +1,8 @@
 <?php
-namespace CminorFramework\UtilityBelt\Wordpress\Helpers\Pagination;
+namespace CminorFramework\UtilityBelt\Wordpress\Components\Pagination;
 
-use CminorFramework\UtilityBelt\General\Helpers\URI\URIHelper;
+use CminorFramework\UtilityBelt\General\Contracts\URI\IURIHelper;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\Pagination\IPaginationHelper;
 /**
  *
  * Creates paginated links and echo pagination on the screen
@@ -12,16 +13,16 @@ use CminorFramework\UtilityBelt\General\Helpers\URI\URIHelper;
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-class PaginationHelper
+class PaginationHelper implements IPaginationHelper
 {
 
     /**
      * DEPENDENCY: holds the uri helper instance
-     * @var \CminorFramework\UtilityBelt\General\Helpers\URI\URIHelper
+     * @var \CminorFramework\UtilityBelt\General\Contracts\URI\IURIHelper
      */
     protected $uri_helper;
 
-    public function __construct(URIHelper $uri_helper)
+    public function __construct(IURIHelper $uri_helper)
     {
         //dependencies
         $this->uri_helper = $uri_helper;

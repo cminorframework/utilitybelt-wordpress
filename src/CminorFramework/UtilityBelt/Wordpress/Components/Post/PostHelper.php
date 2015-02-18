@@ -5,6 +5,7 @@ use CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IPostHelper;
 use CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost;
 use CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post\TPostResolver;
 use CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post\TPostMetaResolver;
+use CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IAttachmentHelper;
 /**
  * Helper class to provide helpful methods for a post
  *
@@ -20,10 +21,6 @@ class PostHelper implements IPostHelper
      */
     use TPostResolver;
 
-    /**
-     * use the trait TPostMetaResolver to include methods to retrieve a post's meta from database
-     */
-    use TPostMetaResolver;
 
     /**
      * Holds the concrete implementation of the IDecoratedPost interface
@@ -32,15 +29,17 @@ class PostHelper implements IPostHelper
      * @var \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
      */
     protected $decorated_post_definition;
+    protected $attachment_helper;
 
     /**
      * The class dependencies
      *
      * @param \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost $decorated_post_definition
      */
-    public function __construct(IDecoratedPost $decorated_post_definition)
+    public function __construct(IDecoratedPost $decorated_post_definition, IAttachmentHelper $attachment_helper)
     {
         $this->decorated_post_definition = $decorated_post_definition;
+        $this->attachment_helper = $attachment_helper;
     }
 
     /**
@@ -59,7 +58,7 @@ class PostHelper implements IPostHelper
      * @param bool $fetch_meta_data if set to true, will also retrieve the post's metadata
      * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
      */
-    public function getDecoratedPost($post, $fetch_meta_data = false)
+    public function getDecoratedPost($post, $fetch_meta_data = false, $fetch_image_attachments = false)
     {
         /*
          * If no post is provided return null
@@ -68,22 +67,43 @@ class PostHelper implements IPostHelper
             return null;
         }
 
-        /*
-         * If $post is not instance of Wp_Post but is integer containing the post id, retrieve the Wp_post object from db using this id
-         */
-        if($post instanceof \WP_Post === false){
-            if(!is_numeric($post)){
-               throw new \InvalidArgumentException($this->_getClassName().'->'.__FUNCTION__.'() at line '.__LINE__.': the $post is not integer or \Wp_Post');
-            }
-            $post = $this->_getPostById($post);
-        }
+        //check if $post is int or Wp_post or IdecoratedPost and return Wp_post
+        $post = $this->_postAdapter($post);
 
         $meta_data = [];
         if($fetch_meta_data){
             $meta_data = $this->_getPostMetaData($post->ID);
         }
 
-        return $this->createDecoratedPost($post, $meta_data, []);
+        $attachments = [];
+        if($fetch_image_attachments){
+            $attachments = $this->_getPostImageAttachments($post->ID);
+        }
+
+        return $this->createDecoratedPost($post, $meta_data, [], $attachments);
+
+    }
+
+    /**
+     * Returns the decorated posts instances associated with the provided $post
+     * @param array $posts an array of \WP_Post
+     * @param bool $fetch_meta_data if set to true, will also retrieve the post's metadata
+     * @return mixed:\CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
+     * @see \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IPostHelper::getDecoratedPost($post, $fetch_meta_data, $fetch_image_attachments)
+     */
+    public function getDecoratedPosts(array $posts, $fetch_meta_data = false, $fetch_image_attachments = false)
+    {
+        if(!$posts){
+            return [];
+        }
+
+        $decorated_posts = [];
+        foreach($posts as $raw_post){
+            $decorated_post = $this->getDecoratedPost($post, $fetch_meta_data, $fetch_image_attachments);
+            $decorated_posts[$raw_post->ID] = $decorated_post;
+        }
+
+        return $decorated_posts;
 
     }
 
@@ -94,7 +114,7 @@ class PostHelper implements IPostHelper
      * @param array $extra_data_array
      * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\Post\IDecoratedPost
      */
-    public function createDecoratedPost(\Wp_Post $post = null, array $meta_data_array = [], array $extra_data_array = [])
+    public function createDecoratedPost(\Wp_Post $post = null, array $meta_data_array = [], array $extra_data_array = [], array $image_attachments = [])
     {
 
         //create a new instance of decorated post by cloning the definition
@@ -103,7 +123,7 @@ class PostHelper implements IPostHelper
 
         //Set the decorated post's properties and data
         if($post){
-            $decorated_post->_setPost($post);
+            $decorated_post->_setRawObject($post);
         }
 
         if($meta_data_array){
@@ -114,7 +134,162 @@ class PostHelper implements IPostHelper
             $decorated_post->_setExtraDataArray($extra_data_array);
         }
 
+        if($image_attachments){
+            $decorated_post->_setImageAttachmentsArray($image_attachments);
+        }
+
         return $decorated_post;
+
+    }
+
+
+    /**
+     * Returns the $post_type post that is connected to the provided post by taxonomy and meta key
+     * @param int $post_id
+     * @param string $post_type
+     * @param string $taxonomy
+     * @param string $connection_meta_key
+     * @throws InvalidArgumentException
+     * @return \WP_Post|NULL
+     */
+    public function getConnectedPostByTaxonomyAndMetaKey($post_id, $post_type, $taxonomy, $connection_meta_key)
+    {
+
+        if(!$post_id){
+            throw new InvalidArgumentException(__CLASS__.'->'.__FUNCTION__.'(): '.'Invalid post id!');
+        }
+
+
+        //get the term for this field taxonomy
+        if(!$terms = wp_get_post_terms( (int) $post_id, $taxonomy)){
+            return null;
+        }
+
+        //its an array, get the first element
+        $term = $terms[0];
+
+        //find the post of this custom taxonomy term
+        $args = array(
+            'post_type' => $post_type,
+            'posts_per_page' => 1,
+            'meta_query' => array(
+                array(
+                    'key'     => $connection_meta_key,
+                    'value'   => array($term->term_id),
+                    'compare' => 'IN',
+                ),
+            )
+        );
+
+        $post_query = new \WP_Query($args);
+
+        if(!$post_query->posts){
+            return null;
+        }
+
+        return $post_query->posts[0];
+
+    }
+
+    /**
+     * Returns the decorated image object associated with this post and meta key
+     * @param int|WP_Post $post
+     * @param string $image_type_meta_key
+     * @return \CminorFramework\UtilityBelt\Wordpress\Contracts\Attachment\IDecoratedImage|NULL
+     */
+    public function getAttachmentImageByPostMeta($post, $image_type_meta_key)
+    {
+        //get the decorated post
+        $decorated_post = $this->_decoratedPostAdapter($post, true);
+
+        $decorated_image = null;
+
+        //find the image id by the post meta and get the decorated image object
+        if($image_id = $decorated_post->getMetaData($image_type_meta_key)){
+            $decorated_image = $this->attachment_helper->getDecoratedImage($image_id, true);
+        }
+
+        return $decorated_image;
+
+    }
+
+    /**
+     * Returns the image src of the image file associated with the provided post by the post meta
+     * @param int|WP_Post $post
+     * @param string $image_type_meta_key
+     * @param string $image_size
+     * @return string|NULL
+     */
+    public function getAttachmentImageSrcByPostMeta($post, $image_type_meta_key, $image_size)
+    {
+
+        try
+                {
+            if($decorated_image = $this->getAttachmentImageByPostMeta($post, $image_type_meta_key)){
+                if($src = $decorated_image->getSrc($image_size)){
+                    return $src;
+                }
+            }
+        }
+        catch(\InvalidArgumentException $e){
+            return null;
+        }
+
+        return null;
+
+    }
+
+
+    /**
+     * Accepts INT(post_id), WP_Post, IDecoratedPost and returns WP_Post
+     *
+     * Throws exception if $post is not one of the above
+     *
+     * @param mixed $post
+     * @throws \InvalidArgumentException
+     * @return \WP_Post|NULL
+     */
+    protected function _postAdapter($post)
+    {
+
+        switch(true){
+            case $post instanceof \WP_Post:
+                return $post;
+            case $post instanceof IDecoratedPost:
+                return $post->getRawObject();
+            case is_numeric($post):
+                return $this->_getPostById($post);
+            default:
+                $message = get_class($this).'->'.__FUNCTION__.'() at line '.__LINE__.': the $post is not INT or \Wp_Post or IDecoratedPost';
+                throw new \InvalidArgumentException($message);
+        }
+
+    }
+
+    /**
+     * Accepts INT(post_id), WP_Post, IDecoratedPost and returns IDecoratedPost
+     *
+     * Throws exception if $post is not one of the above
+     *
+     * @param mixed $post
+     * @param bool $with_meta if true fetches the posts meta information
+     * @throws \InvalidArgumentException
+     * @return IDecoratedPost|NULL
+     */
+    protected function _decoratedPostAdapter($post, $with_meta = true)
+    {
+
+        switch(true){
+            case $post instanceof \WP_Post:
+                return $this->getDecoratedPost($post, $with_meta);
+            case $post instanceof IDecoratedPost:
+                return $post;
+            case is_numeric($post):
+                return $this->getDecoratedPost($post, $with_meta);
+            default:
+                $message = get_class($this).'->'.__FUNCTION__.'() at line '.__LINE__.': the $post is not INT or \Wp_Post or IDecoratedPost';
+                throw new \InvalidArgumentException($message);
+        }
 
     }
 

@@ -1,5 +1,5 @@
 <?php
-namespace CminorFramework\UtilityBelt\Wordpress\Interfaces\Filters;
+namespace CminorFramework\UtilityBelt\Wordpress\Contracts\Filters;
 
 /**
  * Defines the functions for a class that registers wordpress filters
@@ -9,18 +9,18 @@ namespace CminorFramework\UtilityBelt\Wordpress\Interfaces\Filters;
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-interface FilterRegister
+interface IFilterRegister
 {
 
 	/**
-	 * Adds a wordpress action class to the register
+	 * Adds a wordpress filter class to the register
 	 *
-	 * @param ActionRegisterable $action
+	 * @param IFilterRegisterable $action
 	 */
-	public function addFilter(FilterRegisterable $filter);
+	public function addFilter(IFilterRegisterable $filter);
 
 	/**
-	 * Registers all the action classes
+	 * Registers all the filter classes
 	 */
 	public function registerFilters();
 

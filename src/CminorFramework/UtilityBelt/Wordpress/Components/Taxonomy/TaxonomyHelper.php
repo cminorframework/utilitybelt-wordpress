@@ -78,7 +78,7 @@ class TaxonomyHelper implements ITaxonomyHelper
 		$terms =  get_terms( $taxonomy, $filter_arguments );
 
 		if(count($terms) == 1 && get_class($terms) == 'WP_Error'){
-			throw new RuntimeException('Invalid taxonomy, taxonomy not found');
+			throw new \RuntimeException('Invalid taxonomy:'.$taxonomy.', taxonomy not found');
 		}
 
 		return $terms;
@@ -142,5 +142,30 @@ class TaxonomyHelper implements ITaxonomyHelper
 		return $post_query->posts[0];
 
 	}
+
+
+	/**
+	 * Returns the post terms for this taxonomy
+	 * A $callback function can be applied to filter the results
+	 * @param int $post_id
+	 * @param string $taxonomy
+	 * @param string $callback
+	 * @return array
+	 */
+	public function getPostTermsByTaxonomy($post_id, $taxonomy, $callback = null)
+	{
+
+	    $terms = [];
+	    if($taxonomy_terms = wp_get_post_terms($post_id, $taxonomy)){
+
+	        if($callback){
+	            $terms = $callback($taxonomy_terms);
+	        }
+	        $terms = $taxonomy_terms;
+	    }
+
+	    return $terms;
+	}
+
 
 }

@@ -3,13 +3,13 @@ namespace CminorFramework\UtilityBelt\Wordpress\Components\Traits\Post;
 
 use CminorFramework\UtilityBelt\Wordpress\Components\Exception\WordpressFunctionNotFoundException;
 /**
- * Trait that provides methods to fetch a Wp_post metadata
+ * Provides the methods to resolve an attachment and its related data from wordpress database
  *
  * @author Dimitrios Psarrou <dpsarrou@gmail.com> d(^_^)b
  * @link http://soundcloud.com/cminor, https://github.com/dpsarrou
  *
  */
-trait TPostMetaResolver
+trait TAttachmentResolver
 {
 
     /**
@@ -18,14 +18,14 @@ trait TPostMetaResolver
      * @throws \CminorFramework\UtilityBelt\Wordpress\Components\Exception\WordpressFunctionNotFoundException
      * @return array
      */
-    protected function _getPostMetaData($post_id)
+    protected function _getAttachmentMetaData($post_id)
     {
 
-        if(!function_exists('get_post_meta')){
-            throw  new WordpressFunctionNotFoundException($this->_getClassName().'->'.__FUNCTION__.'() at line '.__LINE__.': wordpress method get_post_meta not found');
+        if(!function_exists('wp_get_attachment_metadata')){
+            throw  new WordpressFunctionNotFoundException(__CLASS__.'->'.__FUNCTION__.'() at line '.__LINE__.': wordpress method wp_get_attachment_metadata not found');
         }
 
-        return  get_post_meta( $post_id, null, false );
+        return wp_get_attachment_metadata( $post_id );
 
     }
 
