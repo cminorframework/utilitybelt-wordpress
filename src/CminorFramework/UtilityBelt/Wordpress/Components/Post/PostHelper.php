@@ -192,6 +192,69 @@ class PostHelper implements IPostHelper
     }
 
     /**
+     * Returns the posts (or custom post types) associated with the provided meta data
+     * @param string $meta_key
+     * @param mixed $meta_value
+     * @param string $compare_operator
+     * @param string $post_type
+     * @return multitype:\WP_Post returns an array of post objects, or empty array if nothing found
+     */
+    public function getPostByMetaData($meta_key, $meta_value, $compare_operator = '=', $post_type = 'post')
+    {
+        $arguments = [
+            'post_type'  => $post_type,
+            'meta_key'   => $metakey,
+            'meta_query' => [
+                [
+                    'key'     => $meta_key,
+                    'value'   => $meta_value,
+                    'compare' => $compare_operator,
+                ]
+            ],
+        ];
+
+        $search_query = new \WP_Query( $arguments );
+
+        if(!$search_query->found_posts){
+            return [];
+        }
+        return $search_query->posts;
+    }
+
+    /**
+     * Retrieves a post (or a custom post type) by a post field (ie post_title, post_author, etc)
+     * @param string $field_name
+     * @param mixed $field_value
+     * @param string $post_type
+     * @throws \InvalidArgumentException
+     * @return multitype:\WP_Post returns an array of post objects, or empty array if nothing found
+     */
+    public function getPostByField($field_name, $field_value, $post_type = 'post')
+    {
+
+        if(!$field_name){
+            throw new \InvalidArgumentException(get_class($this).'->'.__FUNCTION__.'(): Invalid field name');
+        }
+
+        if(empty($field_value)){
+            throw new \InvalidArgumentException(get_class($this).'->'.__FUNCTION__.'(): Invalid field value');
+        }
+
+        $query_arguments = [
+            'post_type' => $post_type,
+            $field_name => $field_value
+        ];
+
+        $search_query = new \WP_Query( $query_arguments );
+
+        if(!$search_query->found_posts){
+            return [];
+        }
+
+        return  $search_query->posts;
+    }
+
+    /**
      * Returns the decorated image object associated with this post and meta key
      * @param int|WP_Post $post
      * @param string $image_type_meta_key
