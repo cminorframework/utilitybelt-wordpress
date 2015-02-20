@@ -52,6 +52,25 @@ interface IPostHelper
     public function getConnectedPostByTaxonomyAndMetaKey($post_id, $post_type, $taxonomy, $connection_meta_key);
 
     /**
+     * Returns the posts (or custom post types) associated with the provided meta data
+     * @param string $meta_key
+     * @param mixed $meta_value
+     * @param string $compare_operator
+     * @param string $post_type
+     * @return multitype:\WP_Post returns an array of post objects, or empty array if nothing found
+     */
+    public function getPostByMetaData($meta_key, $meta_value, $compare_operator, $post_type);
+
+    /**
+     * Retrieves a post (or a custom post type) by a post field (ie post_title, post_author, etc)
+     * @param string $field_name
+     * @param mixed $field_value
+     * @param string $post_type
+     * @return multitype:\WP_Post returns an array of post objects, or empty array if nothing found
+     */
+    public function getPostByField($field_name, $field_value, $post_type);
+
+    /**
      * Returns the decorated image object associated with this post and meta key
      * Returns null if no image found
      * @param int|WP_Post $post
