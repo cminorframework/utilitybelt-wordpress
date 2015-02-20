@@ -77,7 +77,7 @@ class TaxonomyHelper implements ITaxonomyHelper
 
 		$terms =  get_terms( $taxonomy, $filter_arguments );
 
-		if(count($terms) == 1 && get_class($terms) == 'WP_Error'){
+		if(count($terms) == 1 && !is_array($terms) && get_class($terms) == 'WP_Error'){
 			throw new \RuntimeException('Invalid taxonomy:'.$taxonomy.', taxonomy not found');
 		}
 
