@@ -1,21 +1,28 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4b7cbffde1c7cadbf895191a310879e5",
+    "hash": "4c94b5007e6853fddca671b1b7308d14",
     "packages": [
         {
             "name": "cminorframework/utilitybelt-general",
-            "version": "dev-master",
+            "version": "0.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cminorframework/utilitybelt-general.git",
-                "reference": "8a4c69b6cbd934a8d06055ecc575eb492af5d2ce"
+                "reference": "535f13b0de9239fac74a5103c7ad9d74f4b241a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cminorframework/utilitybelt-general/zipball/535f13b0de9239fac74a5103c7ad9d74f4b241a1",
+                "reference": "535f13b0de9239fac74a5103c7ad9d74f4b241a1",
+                "shasum": ""
             },
             "require": {
-                "illuminate/container": "*"
+                "illuminate/container": "*",
+                "mobiledetect/mobiledetectlib": "dev-master"
             },
             "type": "library",
             "autoload": {
@@ -33,30 +40,34 @@
                 }
             ],
             "description": "The general utility belt",
-            "time": "2015-02-15 13:25:16"
+            "support": {
+                "source": "https://github.com/cminorframework/utilitybelt-general/tree/0.9.1-adds_user_agent",
+                "issues": "https://github.com/cminorframework/utilitybelt-general/issues"
+            },
+            "time": "2015-02-20 13:10:59"
         },
         {
             "name": "illuminate/container",
-            "version": "dev-master",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
-                "reference": "d2d52b318977103cc5a2eda5bcea1d3f1082cc5f"
+                "reference": "22fae557d2a631585536654fadb069f34c315040"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/container/zipball/d2d52b318977103cc5a2eda5bcea1d3f1082cc5f",
-                "reference": "d2d52b318977103cc5a2eda5bcea1d3f1082cc5f",
+                "url": "https://api.github.com/repos/illuminate/container/zipball/22fae557d2a631585536654fadb069f34c315040",
+                "reference": "22fae557d2a631585536654fadb069f34c315040",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "5.1.*",
+                "illuminate/contracts": "5.0.*",
                 "php": ">=5.4.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "5.1-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -75,20 +86,20 @@
                 }
             ],
             "description": "The Illuminate Container package.",
-            "time": "2015-02-11 15:59:50"
+            "time": "2015-01-07 02:06:23"
         },
         {
             "name": "illuminate/contracts",
-            "version": "dev-master",
+            "version": "5.0.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "e9d98d820300288ac902bd3f6b35a9f5cb7fe2cb"
+                "reference": "6d23815fee6057b29cab8094af8cbb8ce3ac82e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/e9d98d820300288ac902bd3f6b35a9f5cb7fe2cb",
-                "reference": "e9d98d820300288ac902bd3f6b35a9f5cb7fe2cb",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/6d23815fee6057b29cab8094af8cbb8ce3ac82e4",
+                "reference": "6d23815fee6057b29cab8094af8cbb8ce3ac82e4",
                 "shasum": ""
             },
             "require": {
@@ -97,7 +108,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "5.1-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -116,7 +127,62 @@
                 }
             ],
             "description": "The Illuminate Contracts package.",
-            "time": "2015-01-30 19:09:31"
+            "homepage": "http://laravel.com",
+            "time": "2015-05-15 07:22:28"
+        },
+        {
+            "name": "mobiledetect/mobiledetectlib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/serbanghita/Mobile-Detect.git",
+                "reference": "fc81cb582c9cd9024a16e0698c02b6d3cb0229df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/fc81cb582c9cd9024a16e0698c02b6d3cb0229df",
+                "reference": "fc81cb582c9cd9024a16e0698c02b6d3cb0229df",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.0.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "johnkary/phpunit-speedtrap": "~1.0@dev",
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "Mobile_Detect.php"
+                ],
+                "psr-0": {
+                    "Detection": "namespaced/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Serban Ghita",
+                    "email": "serbanghita@gmail.com",
+                    "homepage": "http://mobiledetect.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Mobile_Detect is a lightweight PHP class for detecting mobile devices. It uses the User-Agent string combined with specific HTTP headers to detect the mobile environment.",
+            "homepage": "https://github.com/serbanghita/Mobile-Detect",
+            "keywords": [
+                "detect mobile devices",
+                "mobile",
+                "mobile detect",
+                "mobile detector",
+                "php mobile detect"
+            ],
+            "time": "2015-04-25 20:10:52"
         }
     ],
     "packages-dev": [],

@@ -10,8 +10,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-    	"illuminate/container":"*",
-    	"cminorframework/utilitybelt-general":"*"
+    	"illuminate/container":"5.0",
+    	"cminorframework/utilitybelt-general":"0.9.*"
     },
     "autoload": {
         "psr-4": {
